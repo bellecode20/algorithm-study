@@ -36,14 +36,20 @@ jobs:
         if: contains(steps.check_commit_message.outputs.clean_commit_message, '문제업로드')
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          channels: '#문제-업로드'
-          text: "New commit message: ${{ steps.check_commit_message.outputs.commit_message }}"
+          bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel-id: 'C07A2TZUKGV'
+          slack-message: |
+            {
+              "text": "New commit message: ${{ steps.check_commit_message.outputs.commit_message }}"
+            }
       
       - name: Send Slack Notification for Channel 2
         if: "!contains(steps.check_commit_message.outputs.clean_commit_message, '문제업로드')"
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          channels: '#commit-message'
-          text: "New commit message: ${{ steps.check_commit_message.outputs.commit_message }}"
+          bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel-id: 'C07AVCCV35E'
+          slack-message: |
+            {
+              "text": "New commit message: ${{ steps.check_commit_message.outputs.commit_message }}"
+            }

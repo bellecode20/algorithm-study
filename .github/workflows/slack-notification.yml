@@ -42,6 +42,7 @@ jobs:
       
       - name: Send Slack Notification for Channel 2
         if: "!contains(steps.check_commit_message.outputs.clean_commit_message, '문제업로드')"
+        uses: slackapi/slack-github-action@v1.26.0
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
           channels: '#commit-message'

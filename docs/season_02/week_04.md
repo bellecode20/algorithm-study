@@ -24,7 +24,7 @@ https://school.programmers.co.kr/learn/courses/30/lessons/258705
 
 ***
 
-## [2] 문제 - 삼성 SW 역량테스트 
+## [2] 문제 - 삼성 SW 역량테스트
 
 ### 1. 	마법의 숲 탐색 (삼성 SW 역량테스트 2024 상반기 오후 1번 문제)
 

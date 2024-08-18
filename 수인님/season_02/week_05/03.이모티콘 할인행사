@@ -1,0 +1,31 @@
+# 중복 순열은 일반 순열과는 다르게 선택한 것을 다시 제자리에 돌려 놓고(중복) 배열하는 것을 의미
+# product는 permutations와 같이 리스트와 같은 inertable 객체에서 r개의 데이터를 뽑아 일렬로 나열하는 모든 경우를 계산한다. 다만 원소를 중복하여 뽑는다. product 객체를 초가화할 때는 뽑고자 하는 데이터의 수를 repeat 속성값으로 넣어준다. product는 클래스이므로 객체 초기화 이후에는 리스트 자료형으로 변환하여 사용한다.
+from itertools import product
+
+#목표 : 각 이모티콘의 할인율을 적절하게 정하여 최대의 이모티콘 플러스 가입자를 유치하고, 그 때 최대의 매출을 출력해야함
+def solution(users, emoticons):
+    answer = []
+    sales = [10, 20, 30, 40] # 이모티콘의 할인율
+    # 1. 존재할 수 있는 모든 할인율의 조합을 이모티콘의 길이만큼 구한다. 즉, 모든 할인율의 조합
+    all_discount_rates = list(product(sales, repeat = len(emoticons)))  
+    # [(10, 10), (10, 20), (10, 30), (10, 40), (20, 10), (20, 20), (20, 30), (20, 40), (30, 10), (30, 20), (30, 30), (30, 40), (40, 10), (40, 20), (40, 30), (40, 40)]
+
+    for case in all_discount_rates:   # 이모티콘마다 할인율을 적용하는 모든 경우를 체크
+        result = [0, 0] # 이모티콘플러스 가입자수, 판매액 
+        for user in users:    # 유저마다 이모티콘 구매 후 가격 체크
+            temp = 0    # user의 이모티콘 구입 지불 비용
+            for idx, sale in enumerate(case):
+                if sale >= user[0]:    # 이모티콘 할인율이 유저가 원하는 할인율 이상이면 구매
+                    temp += emoticons[idx] * (100 - sale) // 100
+
+            if temp >= user[1]:    # 유저가 생각하는 예산보다 초과하면 이모티콘플러스에 가입
+                result[0] += 1    # result에 이모티콘 플러스 가입자 카운트 +1
+            else:
+                result[1] += temp    # 가입하지 않는다면 result에 이모티콘 구매 가격 누적
+
+        answer.append(result)    # 해당 할인율 경우에서 구한 결과값을 answer에 추가
+
+    answer.sort(key=lambda x: (-x[0], -x[1]))   
+    # 이모티콘 플러스 가입자 최대(우선순위), 이모티콘 판매액 최대 순으로 정렬
+    
+    return answer[0]

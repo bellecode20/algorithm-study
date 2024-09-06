@@ -1,0 +1,72 @@
+N = int(input()) #n * n 크기의 그림 정보가 주어짐
+arr = [list(map(int, (input().split()) )) for _ in range(N)]
+M = N //2 #그래프 중간
+direction = [(-1,0 ),(1, 0),(0, 1),(0, -1)]
+
+from collections import deque
+def bfs(si, sj):
+    q = deque()
+    q.append((si, sj))
+    visited[si][sj] = 1 # 방문 표시
+    groups[-1].add((si, sj)) #새 좌표를 그룹에 추가. 처음 방문했을때 좌표애 넣어줘야 함. 맨 끝에서 부터.
+
+    while q:
+       ci, cj =  q.popleft()
+       for dr, dc in direction:
+           ni, nj = ci + dr, cj + dc # 네방향, 범위내 , 미방문, 조건(같은 값이면) 이어서 계속 방문하기
+           if 0 <= ni < N and 0 <= nj < N and visited[ni][nj]==0 and arr[ci][cj] == arr[ni][nj]:
+               q.append((ni, nj))
+               visited[ni][nj] = 1
+               groups[-1].add((ni, nj))
+
+#예술점 총 네번 구해야함,
+# 초기 예술 점수, 1회전 이후 예술 점수, 2회전 이후 예술 점수, 그리고 3회전 이후 예술 점수의 합
+ans = 0
+
+for k in range(4): # 4바퀴 돌림
+    # 1) 예술점수 구하기 : 그룹 나누고, 가능한 두개 그룹의 조화로움 누적
+    groups = []
+    numbers = []
+    # 1-1) 미방문 숫자 만나면 bfs() , 같은 그룹(동일한 숫자)의 좌표들을 set에 저장
+    visited = [[0]*N for _ in range(N)]
+    for i in range(N):
+        for j in range(N):
+            if visited[i][j] == 0 : # 미방문
+                groups.append(set())
+                numbers.append(arr[i][j])
+                bfs( i , j) # arr[i][j] 의 숫자와 같은 숫자들을 모두 탐색하면서 같은 색깔 칠해주기
+    # 1-2) 각 그룹간 점수 계산(누적)
+    cnt = len(numbers)
+
+    # cnt개에서 2개 뽑는 가능한 모든 조합
+    for i in range (0, cnt-1):
+        for j in range(i+1, cnt):
+            #(그룹 a에 속한 칸의 수 + 그룹 b에 속한 칸의 수 ) x 그룹 a를 이루고 있는 숫자 값 x 그룹 b를 이루고 있는 숫자 값 x 그룹 a와 그룹 b가 서로 맞닿아 있는 변의 수
+            score = ( len(groups[i]) +  len(groups[j]) ) * numbers[i] * numbers[j] # 인접면 1개당 더해질 값
+            # 그룹 i 와 그룹 j 사이에 인접한 갯수 , group[i]의 모든점들의 4방향 좌표가 group[j]에 있으면 인접하다는 뜻.
+            for x , y in groups[i]:
+                for dr, dc in direction :
+                    nx, ny = x+dr , y+ dc
+                    if (nx, ny) in groups[j] : #인접한 좌표가 그룹j에 있다면
+                        ans += score
+
+    if k == 3: #세번돌리면 더 돌릴필요x
+        break
+    # 2) 회전시키기 : 십자가 반시계방향 , 4개의 부분사각형 시계방향으로 회전
+    # 새로운 배열만들어서 옮겨 붙이기
+    narr = [[0]*N for _ in range(N)]
+    # 십자가 90도 시계방향으로 돌리면 narr[M][i] = arr[i][M] , i는 0부터 N까지 반복됨
+    for i in range(N): # 십자가 부분 반시계방향
+        narr[M][i] = arr[i][M]
+    for j in range(N):
+        narr[j][M] = arr[M][N-j-1]
+
+    for (si, sj) in ( (0,0) , (0, M+1) , (M+1, 0 ) , (M+ 1, M+1) ) : # 4개의 사각형 시작점 에서 시계방향으로 돌려주기
+        for i in range(M):
+            for j in range(M):
+                narr[si+i][sj+j] = arr[si+M-j-1][sj+i]
+
+    arr = narr # new Array 가 생성했으면 array 기준으로 돌리기 때문에 끝날때마다 업데이트 해줘야 한다,
+
+
+print(ans)

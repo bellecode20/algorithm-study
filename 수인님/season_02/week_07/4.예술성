@@ -1,3 +1,4 @@
+```python
 N = int(input()) #n * n 크기의 그림 정보가 주어짐
 arr = [list(map(int, (input().split()) )) for _ in range(N)]
 M = N //2 #그래프 중간
@@ -70,3 +71,5 @@ for k in range(4): # 4바퀴 돌림
 
 
 print(ans)
+
+```
